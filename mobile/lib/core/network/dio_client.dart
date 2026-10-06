@@ -15,6 +15,10 @@ class DioClient {
     final customBaseUrl = storageService.getBaseUrl();
     final baseUrl = (customBaseUrl != null &&
             customBaseUrl.isNotEmpty &&
+            customBaseUrl.startsWith('https://') &&
+            !customBaseUrl.contains('192.168.') &&
+            !customBaseUrl.contains('10.') &&
+            !customBaseUrl.contains('172.') &&
             !customBaseUrl.contains('10.0.2.2') &&
             !customBaseUrl.contains('127.0.0.1') &&
             !customBaseUrl.contains('localhost'))
@@ -23,13 +27,43 @@ class DioClient {
 
     dio.options = BaseOptions(
       baseUrl: baseUrl,
-      connectTimeout: const Duration(seconds: 45),
-      receiveTimeout: const Duration(seconds: 45),
-      sendTimeout: const Duration(seconds: 45),
+      connectTimeout: const Duration(seconds: 60),
+      receiveTimeout: const Duration(seconds: 60),
+      sendTimeout: const Duration(seconds: 60),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
+    );
+
+    // Auto-retry interceptor for Render cloud cold-start wakeups
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onError: (DioException err, ErrorInterceptorHandler handler) async {
+          final isNetworkOrTimeout = err.type == DioExceptionType.connectionTimeout ||
+              err.type == DioExceptionType.receiveTimeout ||
+              err.type == DioExceptionType.sendTimeout ||
+              err.type == DioExceptionType.connectionError;
+
+          final alreadyRetried = err.requestOptions.extra['retried_cold_start'] == true;
+
+          if (isNetworkOrTimeout && !alreadyRetried) {
+            err.requestOptions.extra['retried_cold_start'] = true;
+            // Ensure target is the official Render cloud backend
+            if (!err.requestOptions.baseUrl.contains('onrender.com')) {
+              err.requestOptions.baseUrl = ApiEndpoints.defaultBaseUrl;
+            }
+            try {
+              await Future.delayed(const Duration(milliseconds: 1500));
+              final response = await dio.fetch(err.requestOptions);
+              return handler.resolve(response);
+            } catch (_) {
+              return handler.next(err);
+            }
+          }
+          return handler.next(err);
+        },
+      ),
     );
 
     dio.interceptors.add(AuthInterceptor(dio, storageService));

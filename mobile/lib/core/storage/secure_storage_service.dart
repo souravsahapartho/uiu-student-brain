@@ -32,10 +32,21 @@ class SecureStorageService {
     await _secureStorage.delete(key: _refreshTokenKey);
   }
 
-  // Base URL config
+  // Base URL config: strictly enforces secure cloud URLs and purges stale local IPs
   String? getBaseUrl() {
     final url = _prefs.getString(_baseUrlKey);
-    if (url == null || url.trim().isEmpty || url.contains('10.0.2.2') || url.contains('127.0.0.1') || url.contains('localhost')) {
+    if (url == null ||
+        url.trim().isEmpty ||
+        !url.startsWith('https://') ||
+        url.contains('192.168.') ||
+        url.contains('10.0.2.2') ||
+        url.contains('127.0.0.1') ||
+        url.contains('localhost') ||
+        url.contains('10.') ||
+        url.contains('172.')) {
+      if (url != null) {
+        _prefs.remove(_baseUrlKey);
+      }
       return null;
     }
     return url;

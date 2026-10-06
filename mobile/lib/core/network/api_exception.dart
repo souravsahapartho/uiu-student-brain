@@ -17,7 +17,7 @@ class ApiException implements Exception {
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
         return ApiException(
-          message: 'Connection timed out. Please check your internet connection.',
+          message: 'Connection timed out. Cloud server may be waking up, please retry in a few moments.',
           statusCode: error.response?.statusCode,
         );
       case DioExceptionType.badResponse:
@@ -90,7 +90,7 @@ class ApiException implements Exception {
         );
       case DioExceptionType.connectionError:
         return ApiException(
-          message: 'Cannot reach StudentBrain server. Please verify your connection or backend URL in Settings.',
+          message: 'Cannot reach StudentBrain cloud server. Please check your internet connection and retry.',
           statusCode: 0,
         );
       case DioExceptionType.cancel:

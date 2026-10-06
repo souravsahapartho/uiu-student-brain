@@ -1,7 +1,7 @@
 name: student_brain
 description: "StudentBrain — Intelligent Academic Command Center & Study Network Flutter Android App"
 publish_to: 'none'
-version: 2.6.3+55
+version: 2.6.4+56
 
 environment:
   sdk: ^3.13.4
