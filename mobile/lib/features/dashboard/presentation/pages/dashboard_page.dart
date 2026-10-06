@@ -7,7 +7,6 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/glass_card.dart';
 import '../../../../core/widgets/responsive.dart';
-import '../../../../core/widgets/student_brain_loader.dart';
 import '../../../../core/widgets/user_avatar.dart';
 import '../../../../core/config/providers.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
@@ -58,20 +57,22 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     final dashState = ref.watch(dashboardProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    if (dashState.isLoading && dashState.upcomingClasses.isEmpty && dashState.todayMinutes == 0) {
-      return const Scaffold(
-        body: StudentBrainLoader.fullScreen(
-          message: 'Synchronizing your UIU Scholar Dashboard...',
-        ),
-      );
-    }
-
     final progressRatio = dashState.dailyGoalMinutes > 0
         ? (dashState.todayMinutes / dashState.dailyGoalMinutes).clamp(0.0, 1.0)
         : 0.0;
 
     return Scaffold(
       appBar: AppBar(
+        bottom: dashState.isLoading
+            ? const PreferredSize(
+                preferredSize: Size.fromHeight(2),
+                child: LinearProgressIndicator(
+                  minHeight: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                  backgroundColor: Colors.transparent,
+                ),
+              )
+            : null,
         title: InkWell(
           onTap: () => context.go('/profile'),
           borderRadius: BorderRadius.circular(16),

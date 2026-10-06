@@ -16,21 +16,62 @@ class _SplashPageState extends ConsumerState<SplashPage>
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
+  bool _hasNavigated = false;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 600),
     );
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+    _scaleAnimation = Tween<double>(begin: 0.85, end: 1.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
     );
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeIn),
     );
     _controller.forward();
+
+    // Check if auth is already resolved right after first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkAndNavigate();
+    });
+
+    // Safety fallback: Never stay on splash screen longer than 1.2s
+    Future.delayed(const Duration(milliseconds: 1200), () {
+      if (!_hasNavigated && mounted) {
+        _forceNavigate();
+      }
+    });
+  }
+
+  void _checkAndNavigate() {
+    if (_hasNavigated || !mounted) return;
+    final auth = ref.read(authProvider);
+    if (auth.isInitialCheckDone) {
+      Future.delayed(const Duration(milliseconds: 400), () {
+        if (!_hasNavigated && mounted) {
+          _doNavigate(auth.isAuthenticated);
+        }
+      });
+    }
+  }
+
+  void _forceNavigate() {
+    if (_hasNavigated || !mounted) return;
+    final auth = ref.read(authProvider);
+    _doNavigate(auth.isAuthenticated);
+  }
+
+  void _doNavigate(bool isAuthenticated) {
+    if (_hasNavigated || !mounted) return;
+    _hasNavigated = true;
+    if (isAuthenticated) {
+      context.go('/dashboard');
+    } else {
+      context.go('/login');
+    }
   }
 
   @override
@@ -42,13 +83,10 @@ class _SplashPageState extends ConsumerState<SplashPage>
   @override
   Widget build(BuildContext context) {
     ref.listen(authProvider, (previous, next) {
-      if (next.isInitialCheckDone) {
-        Future.delayed(const Duration(milliseconds: 400), () {
-          if (!mounted || !context.mounted) return;
-          if (next.isAuthenticated) {
-            context.go('/dashboard');
-          } else {
-            context.go('/login');
+      if (next.isInitialCheckDone && !_hasNavigated) {
+        Future.delayed(const Duration(milliseconds: 200), () {
+          if (!_hasNavigated && mounted) {
+            _doNavigate(next.isAuthenticated);
           }
         });
       }
@@ -56,7 +94,9 @@ class _SplashPageState extends ConsumerState<SplashPage>
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Scaffold(
+    return GestureDetector(
+      onTap: _forceNavigate,
+      child: Scaffold(
       backgroundColor: isDark ? AppColors.bgDark : AppColors.bgLight,
       body: Center(
         child: FadeTransition(
@@ -141,6 +181,7 @@ class _SplashPageState extends ConsumerState<SplashPage>
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

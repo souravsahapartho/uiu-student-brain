@@ -101,7 +101,9 @@ class PlannerPage extends ConsumerWidget {
               child: Builder(
                 builder: (context) {
                   if (plannerState.isLoading) {
-                    return const StudentBrainLoader.fullScreen(message: 'Loading routine & class schedules...');
+                    return const Center(
+                      child: StudentBrainLoader(size: 40, message: 'Loading routine & class schedules...'),
+                    );
                   }
 
                   if (plannerState.error != null) {

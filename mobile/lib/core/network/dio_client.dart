@@ -27,16 +27,16 @@ class DioClient {
 
     dio.options = BaseOptions(
       baseUrl: baseUrl,
-      connectTimeout: const Duration(seconds: 60),
-      receiveTimeout: const Duration(seconds: 60),
-      sendTimeout: const Duration(seconds: 60),
+      connectTimeout: const Duration(seconds: 12),
+      receiveTimeout: const Duration(seconds: 15),
+      sendTimeout: const Duration(seconds: 15),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
     );
 
-    // Auto-retry interceptor for Render cloud cold-start wakeups
+    // Auto-retry interceptor for Render cloud cold-start wakeups (swift retry)
     dio.interceptors.add(
       InterceptorsWrapper(
         onError: (DioException err, ErrorInterceptorHandler handler) async {
@@ -54,7 +54,7 @@ class DioClient {
               err.requestOptions.baseUrl = ApiEndpoints.defaultBaseUrl;
             }
             try {
-              await Future.delayed(const Duration(milliseconds: 1500));
+              await Future.delayed(const Duration(milliseconds: 600));
               final response = await dio.fetch(err.requestOptions);
               return handler.resolve(response);
             } catch (_) {

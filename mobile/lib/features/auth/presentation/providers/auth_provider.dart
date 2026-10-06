@@ -46,7 +46,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> checkAuthStatus() async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final hasToken = await _repository.hasValidToken();
+      final hasToken = await _repository.hasValidToken().timeout(
+        const Duration(seconds: 2),
+        onTimeout: () => false,
+      );
       if (!hasToken) {
         state = state.copyWith(
           isLoading: false,
@@ -56,7 +59,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
         return;
       }
 
-      final user = await _repository.getMe();
+      final user = await _repository.getMe().timeout(
+        const Duration(seconds: 4),
+      );
       state = state.copyWith(
         user: user,
         isLoading: false,

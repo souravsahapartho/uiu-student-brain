@@ -13,23 +13,57 @@ class SecureStorageService {
   SecureStorageService(this._secureStorage, this._prefs);
 
   Future<void> saveTokens({required String access, String? refresh}) async {
-    await _secureStorage.write(key: _accessTokenKey, value: access);
+    await _prefs.setString(_accessTokenKey, access);
     if (refresh != null && refresh.isNotEmpty) {
-      await _secureStorage.write(key: _refreshTokenKey, value: refresh);
+      await _prefs.setString(_refreshTokenKey, refresh);
     }
+    try {
+      await _secureStorage.write(key: _accessTokenKey, value: access);
+      if (refresh != null && refresh.isNotEmpty) {
+        await _secureStorage.write(key: _refreshTokenKey, value: refresh);
+      }
+    } catch (_) {}
   }
 
   Future<String?> getAccessToken() async {
-    return await _secureStorage.read(key: _accessTokenKey);
+    final cached = _prefs.getString(_accessTokenKey);
+    if (cached != null && cached.isNotEmpty) {
+      return cached;
+    }
+    try {
+      final token = await _secureStorage.read(key: _accessTokenKey).timeout(const Duration(milliseconds: 500));
+      if (token != null && token.isNotEmpty) {
+        await _prefs.setString(_accessTokenKey, token);
+      }
+      return token;
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<String?> getRefreshToken() async {
-    return await _secureStorage.read(key: _refreshTokenKey);
+    final cached = _prefs.getString(_refreshTokenKey);
+    if (cached != null && cached.isNotEmpty) {
+      return cached;
+    }
+    try {
+      final token = await _secureStorage.read(key: _refreshTokenKey).timeout(const Duration(milliseconds: 500));
+      if (token != null && token.isNotEmpty) {
+        await _prefs.setString(_refreshTokenKey, token);
+      }
+      return token;
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<void> clearTokens() async {
-    await _secureStorage.delete(key: _accessTokenKey);
-    await _secureStorage.delete(key: _refreshTokenKey);
+    await _prefs.remove(_accessTokenKey);
+    await _prefs.remove(_refreshTokenKey);
+    try {
+      await _secureStorage.delete(key: _accessTokenKey).timeout(const Duration(milliseconds: 500));
+      await _secureStorage.delete(key: _refreshTokenKey).timeout(const Duration(milliseconds: 500));
+    } catch (_) {}
   }
 
   // Base URL config: strictly enforces secure cloud URLs and purges stale local IPs
