@@ -606,10 +606,116 @@ All pre-seeded demo accounts share the password: **`Password123!`**
 
 ## 👨‍💻 Project Team & Contributors
 
-- **Rafayet Hossen** — Full-Stack Architecture, Study Tracker, Gemini AI Diagnostic Testing, Academic Analytics Dashboard, DevOps & Deployment.
-- **Sourav Saha** — Community Discussions Hub, Study Events Engine, Global Leaderboard Service, UIU BSCSE Autocomplete & Dynamic Course Catalogue Integration, Android Mobile Release Deployment.
-- **Baitun Nahar Bithy** — Academic UI/UX Design System, Grade Planner & GPA Forecasting Engine.
-- **Saptarshi Biswas Supty** — Academic UI/UX Design System, Study Schedule Maker & Routine Planner.
+The development of **StudentBrain** is driven by a multidisciplinary team of engineers and designers, with clearly demarcated module ownership covering backend architecture, mobile engineering, frontend development, algorithmic modeling, and UI/UX design:
+
+```
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                               STUDENTBRAIN CORE TEAM                                   │
+├──────────────────────────┬──────────────────────────┬──────────────────────────────────┤
+│ Contributor              │ Core Role                │ Primary Modules                  │
+├──────────────────────────┼──────────────────────────┼──────────────────────────────────┤
+│ 👑 Rafayet Hossen        │ Backend & AI Architect   │ accounts, ai, analytics, devops  │
+│ 🚀 Sourav Saha           │ Mobile & Community Lead  │ mobile (v2.6.3), community, uiu  │
+│ 🎨 Baitun Nahar Bithy    │ UI/UX Lead & GPA Core    │ grades, profile setup, theme/ui  │
+│ 📅 Saptarshi Biswas Supty│ Frontend Planner Core    │ planner, materials, course-chat  │
+└──────────────────────────┴──────────────────────────┴──────────────────────────────────┘
+```
+
+---
+
+### 1. 👑 Rafayet Hossen
+**Lead Backend & AI Architect / DevOps Engineer**
+
+- **High-Speed Authentication Engine (`accounts`)**:
+  - Architected the `CustomTokenObtainPairSerializer` & view featuring indexed instant email pre-validation (`email__iexact`), bypassing redundant PBKDF2 hash cycles on invalid credentials for sub-5ms error responses.
+  - Implemented the **Embedded Single-Roundtrip Auth Payload**, packaging JWT access/refresh tokens and the full `user` profile in a single POST response, cutting initial dashboard load time in half.
+- **Google Gemini 2.0 Flash AI Pipeline (`ai`)**:
+  - Designed multimodal document ingestion and automated diagnostic quiz generation from uploaded study materials.
+  - Built diagnostic weak topic assessment reports, scoring rubrics, and personalized AI study recommendations.
+- **Persistent Event Notification Engine (`accounts`)**:
+  - Engineered backend background notification scheduling that dispatches automated advance reminders **1 day before** and **1 hour before** scheduled campus study events.
+  - Implemented interactive database persistence for read/unread notification tracking.
+- **Cross-Module Academic Analytics (`analytics`)**:
+  - Developed statistical aggregations for 7-day focus histograms, subject distribution matrices, and schedule adherence audits.
+- **DevOps, Security & Production Infrastructure**:
+  - Configured multi-container Docker Compose environments (`backend`, `frontend`, `db`, `nginx`), automated deployment scripts (`deploy.sh`), Gunicorn WSGI tuning, PostgreSQL 16 schema design, and production SSL/Certbot integrations.
+  - Sanitized environment variables and Docker compose configurations to ensure zero credential leaks.
+
+---
+
+### 2. 🚀 Sourav Saha
+**Mobile Application Lead / Cross-Platform Architect & Community Engineer**
+
+- **Official Android Flutter Mobile App (`mobile/` Release v2.6.3+55)**:
+  - Spearheaded end-to-end mobile architecture with Flutter & Dart, implementing Clean Layered Architecture, Riverpod 2.6 state management, GoRouter declarative routing, and Dio networking with queued JWT refresh interceptors.
+  - Maintained single repository binary tracking for [`mobile/StudentBrain.apk`](mobile/StudentBrain.apk) and managed GitHub Releases v2.6.3 deployment.
+- **Dynamic Text-to-Speech (TTS) Voice Coach (`mobile` + `tracker`)**:
+  - Integrated native `flutter_tts` audio speech synthesis delivering dynamic, randomized motivational congratulations and study recommendations upon focus session completion.
+- **Smart Focus Tracker & Material Selector (`mobile` + `tracker`)**:
+  - Built mobile timer controls with manual play/pause controls (eliminating accidental auto-starts), trimester course and material selection, and auto-reload on Focus bottom navigation tap.
+- **Live Scholar Social Network & Synchronization (`community`)**:
+  - Developed real-time auto-synchronization of follower and following counts with fallback validation.
+  - Created full follower management modals featuring compact **Unfollow** and **Remove Follower** actions.
+  - Engineered in-place discussion post editing that updates existing discussions directly without creating duplicates.
+- **UIU BSCSE Course Catalogue & Autocomplete Engine**:
+  - Structured the official 12-trimester UIU BSCSE curriculum matrix with prerequisite validation and exam-slot clash prevention across both web and mobile.
+- **Privacy-Preserving Global Scholar Leaderboard (`community`)**:
+  - Implemented automated default opt-in system, multi-tier deterministic ranking algorithms, and sanitized corrupted/foreign leaderboard characters.
+
+---
+
+### 3. 🎨 Baitun Nahar Bithy
+**Academic UI/UX Lead & Frontend Core / GPA Forecasting Specialist**
+
+- **Dynamic Academic Profile Setup**:
+  - Designed and implemented a clean, fully responsive setup interface with fixed top navigation, zero pre-selected dummy values for full student autonomy, and customized daily study goals.
+- **Grade Planner & GPA Trajectory Forecasting (`grades`)**:
+  - Formulated quality-point mathematical models, cumulative CGPA calculation, course retake scenario analysis, and exact required GPA projections across remaining degree credits.
+- **Feasibility Audit & Visual Alerts**:
+  - Designed real-time color-coded trajectory feedback (green for feasible $\le 4.00$, warning amber for unreachable $> 4.00$) with actionable advice for academic goal adjustment.
+- **Glassmorphic Academic UI/UX Design System**:
+  - Created the high-definition StudentBrain visual identity, orbital intelligence badges, ambient glowing backdrops, responsive card components, and seamless dark/light theme switching.
+- **Materials Hub UI & Reader Experience**:
+  - Refined the lecture document reader interface with a distraction-free layout and removed redundant 'saved' badges.
+
+---
+
+### 4. 📅 Saptarshi Biswas Supty
+**Frontend Engineer / Schedule & Study Planner Specialist**
+
+- **Study Schedule Maker & Routine Planner (`planner`)**:
+  - Developed weekly time-blocking calendar grids, recurring multi-day routine chips (_Mon, Wed, Fri_), room/location tags, and assignment deadline tracking.
+- **Schedule Collision & Integrity Validation Engine**:
+  - Implemented client-side schedule validation guaranteeing routine integrity (`start_time < end_time`), active class sorting, and day-by-day filter views (Today vs. Full 7-day grid).
+- **Integration with UIU Course Autocomplete**:
+  - Connected routine schedule forms with the UIU Course Autocomplete Engine for rapid course entry and metadata auto-filling.
+- **Study Materials Hub & Multi-Format Exporter (`materials`)**:
+  - Built ingestion workflows for `.pdf`, `.docx`, `.txt`, `.md`, and `.csv` lecture materials, in-browser notes editor, and formatted PDF study guide generation via Python `reportlab`.
+- **Course-Specific AI Chat Interface**:
+  - Implemented interactive chat assistant UI grounded in enrolled course lecture notes.
+
+---
+
+### 📊 Team Contribution & Responsibility Matrix
+
+| Feature / Module Area | Primary Contributor | Specific Scope & Responsibilities |
+|---|---|---|
+| **Android Mobile Application (v2.6.3)** | **Sourav Saha** | Flutter architecture, Riverpod, GoRouter, Dio interceptor, APK build & GitHub release |
+| **TTS Dynamic Voice Coach** | **Sourav Saha** | Audio speech synthesis, randomized completion congratulations, post-session prompts |
+| **Scholar Social Network & Community** | **Sourav Saha** | Live follower/following sync, follower removal/unfollow modals, in-place post editing |
+| **UIU Course Autocomplete Matrix** | **Sourav Saha** | 12-trimester curriculum matrix, prerequisite checks, exam-slot clash prevention |
+| **Global Scholar Leaderboard** | **Sourav Saha** | Default opt-in system, deterministic tie-breaking rankings, text sanitization |
+| **High-Speed Authentication Engine** | **Rafayet Hossen** | Instant email pre-check, embedded single-roundtrip login payload, error messaging |
+| **Gemini AI Diagnostic Assessment** | **Rafayet Hossen** | Automated MCQ generation, weak topic reports, concept explanation pipelines |
+| **Persistent Event Notifications** | **Rafayet Hossen** | 1-day & 1-hour advance event reminders, read/unread database persistence |
+| **Academic Analytics & Adherence Audit** | **Rafayet Hossen** | 7-day focus histogram, subject distribution, schedule adherence mathematical metrics |
+| **DevOps & Production Infrastructure** | **Rafayet Hossen** | Docker Compose, Nginx reverse proxy, PostgreSQL schema, SSL/Certbot, env sanitization |
+| **Dynamic Academic Profile Setup** | **Baitun Nahar Bithy** | Responsive setup page, fixed top navigation, clean zero-dummy-data inputs |
+| **Grade Planner & GPA Forecasting** | **Baitun Nahar Bithy** | Quality points projection, retake simulator, required GPA math, feasibility status |
+| **Academic UI/UX & Design System** | **Baitun Nahar Bithy** | Glassmorphic visual identity, orbital badges, dark/light theme, materials badge cleanup |
+| **Study Schedule Maker & Routine** | **Saptarshi Biswas Supty**| Weekly calendar time-blocking, recurring multi-day chips, routine integrity validation |
+| **Materials Hub & Native Reader** | **Saptarshi Biswas Supty**| Multi-format ingestion, in-browser notes editor, PDF study guide export |
+| **Course-Specific AI Chat Assistant** | **Saptarshi Biswas Supty**| Interactive course tutor UI grounded in lecture slides and extracted notes |
 
 ---
 

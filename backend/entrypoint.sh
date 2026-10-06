@@ -16,7 +16,7 @@ import psycopg
 host = os.environ.get("POSTGRES_HOST", "db")
 port = os.environ.get("POSTGRES_PORT", "5432")
 user = os.environ.get("POSTGRES_USER", "student_brain")
-password = os.environ.get("POSTGRES_PASSWORD", "postgres_dev_password")
+password = os.environ.get("POSTGRES_PASSWORD", "rafayet150903")
 dbname = os.environ.get("POSTGRES_DB", "student_brain")
 
 max_attempts = 15

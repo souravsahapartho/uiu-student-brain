@@ -6,7 +6,7 @@ services:
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-student_brain}
       POSTGRES_USER: ${POSTGRES_USER:-student_brain}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_dev_password}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-rafayet150903}
     volumes:
       - pgdata_prod:/var/lib/postgresql/data
     healthcheck:
@@ -36,7 +36,7 @@ services:
       POSTGRES_PORT: 5432
       POSTGRES_DB: ${POSTGRES_DB:-student_brain}
       POSTGRES_USER: ${POSTGRES_USER:-student_brain}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_dev_password}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-rafayet150903}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       AUTO_SEED: ${AUTO_SEED:-false}
     volumes:
