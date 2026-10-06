@@ -77,7 +77,6 @@ export default function AnalyticsPage() {
         <div className="page-header-row">
           <div>
             <h1 className="page-title">
-              <BarChart3 size={28} className="text-indigo" />
               <BarChart3 size={28} className="text-orange" />
               <span>Academic & Focus Analytics</span>
             </h1>
