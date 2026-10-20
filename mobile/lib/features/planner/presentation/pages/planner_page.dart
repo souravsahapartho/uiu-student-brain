@@ -100,7 +100,7 @@ class PlannerPage extends ConsumerWidget {
               color: AppColors.primary,
               child: Builder(
                 builder: (context) {
-                  if (plannerState.isLoading) {
+                  if (plannerState.isLoading && plannerState.schedules.isEmpty) {
                     return const Center(
                       child: StudentBrainLoader(size: 40, message: 'Loading routine & class schedules...'),
                     );

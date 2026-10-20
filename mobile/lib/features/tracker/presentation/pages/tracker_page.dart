@@ -156,7 +156,7 @@ class TrackerPage extends ConsumerWidget {
                   const SizedBox(height: 12),
 
                   // 4. Sessions List
-                  if (trackerState.isLoading)
+                  if (trackerState.isLoading && trackerState.sessions.isEmpty)
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 36),
                       child: StudentBrainLoader(

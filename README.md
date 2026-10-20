@@ -7,7 +7,7 @@
 [![Dart](https://img.shields.io/badge/Dart-3.13.4-0175C2?logo=dart)](https://dart.dev/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql)](https://www.postgresql.org/)
 [![Google Gemini](https://img.shields.io/badge/Google%20Gemini-2.0%20Flash-4285F4?logo=google)](https://deepmind.google/technologies/gemini/)
-[![Android APK Release](https://img.shields.io/badge/Download-Release%20APK%20(v2.6.6)-3DDC84?logo=android&logoColor=white)](https://github.com/souravsahapartho/uiu-student-brain/blob/main/mobile/StudentBrain.apk?raw=true)
+[![Android APK Release](https://img.shields.io/badge/Download-Release%20APK%20(v2.6.7)-3DDC84?logo=android&logoColor=white)](https://github.com/souravsahapartho/uiu-student-brain/blob/main/mobile/StudentBrain.apk?raw=true)
 [![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?logo=docker)](https://www.docker.com/)
 [![Nginx](https://img.shields.io/badge/Nginx-Reverse%20Proxy-009639?logo=nginx)](https://nginx.org/)
 [![UIU BSCSE Aligned](https://img.shields.io/badge/UIU%20BSCSE-Syllabus%20Aligned-FF6F00?logo=buffer)](https://www.uiu.ac.bd/)
@@ -17,15 +17,15 @@
 
 ---
 
-## 📱 Mobile Application (Android APK Release v2.6.6)
+## 📱 Mobile Application (Android APK Release v2.6.7)
 
 Experience the full power of StudentBrain on your Android device with the official Flutter release:
 
-- 🚀 **Direct Download (v2.6.6 Final APK)**: [**Download StudentBrain.apk (Raw)**](https://github.com/souravsahapartho/uiu-student-brain/blob/main/mobile/StudentBrain.apk?raw=true)
+- 🚀 **Direct Download (v2.6.7 Final APK)**: [**Download StudentBrain.apk (Raw)**](https://github.com/souravsahapartho/uiu-student-brain/blob/main/mobile/StudentBrain.apk?raw=true)
 - 🌐 **Direct CDN Link**: [**Download StudentBrain.apk (Fast CDN)**](https://raw.githubusercontent.com/souravsahapartho/uiu-student-brain/main/mobile/StudentBrain.apk)
-- 📦 **GitHub Release Tag**: [**View v2.6.6 Release Notes & Assets**](https://github.com/souravsahapartho/uiu-student-brain/releases/tag/v2.6.6)
-- 📁 **Repository Binary Location**: [`mobile/StudentBrain.apk`](mobile/StudentBrain.apk) *(Size: ~64.6 MB, Build 58)*
-- ⚡ **24/7 Cloud Architecture & Offline-First Startup**: The mobile app is permanently locked to the live Render cloud backend (`https://uiu-student-brain.onrender.com/api`) and supported by an automated GitHub Actions keepalive ping service. Features instant offline profile caching (< 100ms splash exit) and never logs out on slow networks or cold-start wakeups.
+- 📦 **GitHub Release Tag**: [**View v2.6.7 Release Notes & Assets**](https://github.com/souravsahapartho/uiu-student-brain/releases/tag/v2.6.7)
+- 📁 **Repository Binary Location**: [`mobile/StudentBrain.apk`](mobile/StudentBrain.apk) *(Size: ~65 MB, Build 59)*
+- ⚡ **24/7 Cloud Architecture & Offline-First Startup**: The mobile app is permanently locked to the live Render cloud backend (`https://uiu-student-brain.onrender.com/api`) and supported by UptimeRobot & GitHub Actions keepalive ping service. Features instant offline profile caching (< 100ms splash exit), unblocked QueuedInterceptor token refresh pipeline with 30-day JWT lifespan, non-blocking page loaders, and never locks or logs out on slow networks.
 
 ---
 

@@ -500,7 +500,7 @@ class _MaterialsPageState extends ConsumerState<MaterialsPage> with SingleTicker
                   ),
                   const SizedBox(height: 10),
 
-                  if (matState.isLoading)
+                  if (matState.isLoading && matState.materials.isEmpty)
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 36),
                       child: StudentBrainLoader(

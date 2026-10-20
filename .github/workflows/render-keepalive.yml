@@ -16,3 +16,4 @@ jobs:
           echo "Pinging StudentBrain Render Cloud API..."
           curl -s -f -m 30 https://uiu-student-brain.onrender.com/healthz/ || curl -s -f -m 30 https://uiu-student-brain.onrender.com/api/ || true
           echo "Keepalive ping sent successfully."
+

@@ -6,10 +6,24 @@ import '../storage/secure_storage_service.dart';
 class AuthInterceptor extends QueuedInterceptor {
   final Dio _dio;
   final SecureStorageService _storageService;
+  late final Dio _tokenDio;
   bool _isRefreshing = false;
   final List<Completer<void>> _refreshCompleters = [];
 
-  AuthInterceptor(this._dio, this._storageService);
+  AuthInterceptor(this._dio, this._storageService) {
+    _tokenDio = Dio(
+      BaseOptions(
+        baseUrl: _dio.options.baseUrl,
+        connectTimeout: const Duration(seconds: 15),
+        receiveTimeout: const Duration(seconds: 15),
+        sendTimeout: const Duration(seconds: 15),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      ),
+    );
+  }
 
   @override
   Future<void> onRequest(
@@ -59,10 +73,10 @@ class AuthInterceptor extends QueuedInterceptor {
 
       _isRefreshing = true;
       try {
-        final response = await _dio.post(
+        _tokenDio.options.baseUrl = _dio.options.baseUrl;
+        final response = await _tokenDio.post(
           ApiEndpoints.tokenRefresh,
           data: {'refresh': refreshToken},
-          options: Options(headers: {'Requires-Token': 'false'}),
         );
 
         final newAccess = response.data['access'] as String?;
