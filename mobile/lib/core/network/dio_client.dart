@@ -12,24 +12,11 @@ class DioClient {
   DioClient({
     required this.storageService,
   }) : dio = Dio() {
-    final customBaseUrl = storageService.getBaseUrl();
-    final baseUrl = (customBaseUrl != null &&
-            customBaseUrl.isNotEmpty &&
-            customBaseUrl.startsWith('https://') &&
-            !customBaseUrl.contains('192.168.') &&
-            !customBaseUrl.contains('10.') &&
-            !customBaseUrl.contains('172.') &&
-            !customBaseUrl.contains('10.0.2.2') &&
-            !customBaseUrl.contains('127.0.0.1') &&
-            !customBaseUrl.contains('localhost'))
-        ? customBaseUrl
-        : ApiEndpoints.defaultBaseUrl;
-
     dio.options = BaseOptions(
-      baseUrl: baseUrl,
-      connectTimeout: const Duration(seconds: 12),
-      receiveTimeout: const Duration(seconds: 15),
-      sendTimeout: const Duration(seconds: 15),
+      baseUrl: ApiEndpoints.defaultBaseUrl,
+      connectTimeout: const Duration(seconds: 45),
+      receiveTimeout: const Duration(seconds: 45),
+      sendTimeout: const Duration(seconds: 45),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -49,12 +36,9 @@ class DioClient {
 
           if (isNetworkOrTimeout && !alreadyRetried) {
             err.requestOptions.extra['retried_cold_start'] = true;
-            // Ensure target is the official Render cloud backend
-            if (!err.requestOptions.baseUrl.contains('onrender.com')) {
-              err.requestOptions.baseUrl = ApiEndpoints.defaultBaseUrl;
-            }
+            err.requestOptions.baseUrl = ApiEndpoints.defaultBaseUrl;
             try {
-              await Future.delayed(const Duration(milliseconds: 600));
+              await Future.delayed(const Duration(milliseconds: 1000));
               final response = await dio.fetch(err.requestOptions);
               return handler.resolve(response);
             } catch (_) {

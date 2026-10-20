@@ -1,0 +1,18 @@
+name: Render 24/7 Cloud Keepalive
+
+on:
+  schedule:
+    # Run every 10 minutes to prevent Render free-tier from spinning down
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    name: Ping StudentBrain Cloud Backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Backend Healthz
+        run: |
+          echo "Pinging StudentBrain Render Cloud API..."
+          curl -s -f -m 30 https://uiu-student-brain.onrender.com/healthz/ || curl -s -f -m 30 https://uiu-student-brain.onrender.com/api/ || true
+          echo "Keepalive ping sent successfully."

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import '../../../../core/constants/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/storage/secure_storage_service.dart';
@@ -29,10 +30,14 @@ class AuthRepository {
 
     // Fast-path: return user embedded directly in the login response
     if (data['user'] != null && data['user'] is Map<String, dynamic>) {
-      return UserModel.fromJson(data['user'] as Map<String, dynamic>);
+      final user = UserModel.fromJson(data['user'] as Map<String, dynamic>);
+      await saveCachedUser(user);
+      return user;
     }
 
-    return await getMe();
+    final user = await getMe();
+    await saveCachedUser(user);
+    return user;
   }
 
   Future<UserModel> register({
@@ -59,12 +64,16 @@ class AuthRepository {
 
   Future<UserModel> getMe() async {
     final response = await _dioClient.get(ApiEndpoints.me);
-    return UserModel.fromJson(response.data as Map<String, dynamic>);
+    final user = UserModel.fromJson(response.data as Map<String, dynamic>);
+    await saveCachedUser(user);
+    return user;
   }
 
   Future<UserModel> updateProfile(Map<String, dynamic> data) async {
     final response = await _dioClient.patch(ApiEndpoints.me, data: data);
-    return UserModel.fromJson(response.data as Map<String, dynamic>);
+    final user = UserModel.fromJson(response.data as Map<String, dynamic>);
+    await saveCachedUser(user);
+    return user;
   }
 
   Future<void> logout() async {
@@ -74,5 +83,21 @@ class AuthRepository {
   Future<bool> hasValidToken() async {
     final token = await _storageService.getAccessToken();
     return token != null && token.isNotEmpty;
+  }
+
+  Future<void> saveCachedUser(UserModel user) async {
+    try {
+      await _storageService.saveCachedUserJson(jsonEncode(user.toJson()));
+    } catch (_) {}
+  }
+
+  UserModel? getCachedUser() {
+    try {
+      final jsonStr = _storageService.getCachedUserJson();
+      if (jsonStr != null && jsonStr.isNotEmpty) {
+        return UserModel.fromJson(jsonDecode(jsonStr) as Map<String, dynamic>);
+      }
+    } catch (_) {}
+    return null;
   }
 }

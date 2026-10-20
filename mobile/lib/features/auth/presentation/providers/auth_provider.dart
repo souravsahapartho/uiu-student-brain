@@ -59,17 +59,37 @@ class AuthNotifier extends StateNotifier<AuthState> {
         return;
       }
 
-      final user = await _repository.getMe().timeout(
-        const Duration(seconds: 4),
-      );
+      // Fast-path: Immediately load cached user profile so user enters the app instantly!
+      final cachedUser = _repository.getCachedUser();
       state = state.copyWith(
-        user: user,
+        user: cachedUser,
         isLoading: false,
         isAuthenticated: true,
         isInitialCheckDone: true,
       );
+
+      // Refresh fresh profile from cloud in background without blocking startup
+      try {
+        final freshUser = await _repository.getMe().timeout(const Duration(seconds: 35));
+        state = state.copyWith(
+          user: freshUser,
+          isAuthenticated: true,
+          isInitialCheckDone: true,
+        );
+      } catch (e) {
+        if (e is ApiException && e.statusCode == 401) {
+          // Token is genuinely invalid/revoked on the server
+          await _repository.logout();
+          state = state.copyWith(
+            user: null,
+            isLoading: false,
+            isAuthenticated: false,
+            isInitialCheckDone: true,
+          );
+        }
+        // If it's a network error, timeout, or Render cold start, DO NOT log out!
+      }
     } catch (_) {
-      await _repository.logout();
       state = state.copyWith(
         user: null,
         isLoading: false,

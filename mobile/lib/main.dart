@@ -24,18 +24,8 @@ Future<void> main() async {
   // Initialize SharedPreferences
   final sharedPreferences = await SharedPreferences.getInstance();
 
-  // Purge any stale local development IP so the app always uses the 24/7 Render cloud backend
-  final savedBaseUrl = sharedPreferences.getString('sb_api_base_url');
-  if (savedBaseUrl != null &&
-      (!savedBaseUrl.startsWith('https://') ||
-          savedBaseUrl.contains('192.168.') ||
-          savedBaseUrl.contains('10.') ||
-          savedBaseUrl.contains('172.') ||
-          savedBaseUrl.contains('localhost') ||
-          savedBaseUrl.contains('127.0.0.1') ||
-          savedBaseUrl.contains('10.0.2.2'))) {
-    await sharedPreferences.remove('sb_api_base_url');
-  }
+  // Always ensure stale local development IP is removed so the app 100% uses 24/7 Render cloud backend
+  await sharedPreferences.remove('sb_api_base_url');
 
   // Initialize local notifications service
   try {

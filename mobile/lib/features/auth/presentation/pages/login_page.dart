@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -21,9 +22,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   String? _noticeMessage;
+  Timer? _connectingTimer;
+  bool _isConnecting = false;
 
   @override
   void dispose() {
+    _connectingTimer?.cancel();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -31,15 +35,31 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   Future<void> _handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
-    setState(() => _noticeMessage = null);
+    setState(() {
+      _noticeMessage = null;
+      _isConnecting = false;
+    });
 
-    final success = await ref.read(authProvider.notifier).login(
-          email: _emailController.text,
-          password: _passwordController.text,
-        );
+    _connectingTimer?.cancel();
+    _connectingTimer = Timer(const Duration(milliseconds: 2500), () {
+      if (mounted) setState(() => _isConnecting = true);
+    });
 
-    if (success && mounted) {
-      context.go('/dashboard');
+    try {
+      final success = await ref.read(authProvider.notifier).login(
+            email: _emailController.text,
+            password: _passwordController.text,
+          );
+
+      _connectingTimer?.cancel();
+      if (mounted) setState(() => _isConnecting = false);
+
+      if (success && mounted) {
+        context.go('/dashboard');
+      }
+    } catch (_) {
+      _connectingTimer?.cancel();
+      if (mounted) setState(() => _isConnecting = false);
     }
   }
 
@@ -245,6 +265,31 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             onPressed: _handleLogin,
                             isLoading: authState.isLoading,
                           ),
+                          if (authState.isLoading && _isConnecting) ...[
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const SizedBox(
+                                  width: 12,
+                                  height: 12,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Connecting to StudentBrain 24/7 Cloud...',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: isDark ? AppColors.textDarkMuted : AppColors.textLightMuted,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                           const SizedBox(height: 14),
 
                           // Divider

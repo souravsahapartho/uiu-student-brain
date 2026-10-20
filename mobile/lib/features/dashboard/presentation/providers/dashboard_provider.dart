@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/config/providers.dart';
 import '../../../../core/constants/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../../../core/storage/secure_storage_service.dart';
 
 class DashboardState {
   final int currentStreak;
@@ -73,9 +75,29 @@ class DashboardState {
 
 class DashboardNotifier extends StateNotifier<DashboardState> {
   final DioClient _dioClient;
+  final SecureStorageService _storageService;
 
-  DashboardNotifier(this._dioClient) : super(const DashboardState()) {
+  DashboardNotifier(this._dioClient, this._storageService) : super(const DashboardState()) {
+    _loadFromCache();
     loadDashboard();
+  }
+
+  void _loadFromCache() {
+    try {
+      final jsonStr = _storageService.getCachedDashboardJson();
+      if (jsonStr != null && jsonStr.isNotEmpty) {
+        final map = jsonDecode(jsonStr) as Map<String, dynamic>;
+        state = state.copyWith(
+          currentStreak: map['current_streak'] as int?,
+          longestStreak: map['longest_streak'] as int?,
+          todayMinutes: map['today_minutes'] as int?,
+          dailyGoalMinutes: map['daily_goal_minutes'] as int?,
+          currentGpa: (map['current_gpa'] != null) ? double.tryParse('${map['current_gpa']}') : null,
+          targetGpa: (map['target_gpa'] != null) ? double.tryParse('${map['target_gpa']}') : null,
+          requiredGpa: (map['required_gpa'] != null) ? double.tryParse('${map['required_gpa']}') : null,
+        );
+      }
+    } catch (_) {}
   }
 
   Future<void> loadDashboard() async {
@@ -199,6 +221,19 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
         isLoading: false,
         error: null,
       );
+
+      try {
+        final cacheMap = {
+          'current_streak': streak,
+          'longest_streak': maxStreak,
+          'today_minutes': todayMin,
+          'daily_goal_minutes': goalMin,
+          'current_gpa': cGpa,
+          'target_gpa': tGpa,
+          'required_gpa': rGpa,
+        };
+        _storageService.saveCachedDashboardJson(jsonEncode(cacheMap));
+      } catch (_) {}
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -219,5 +254,6 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
 final dashboardProvider =
     StateNotifierProvider<DashboardNotifier, DashboardState>((ref) {
   final dioClient = ref.watch(dioClientProvider);
-  return DashboardNotifier(dioClient);
+  final storageService = ref.watch(secureStorageServiceProvider);
+  return DashboardNotifier(dioClient, storageService);
 });

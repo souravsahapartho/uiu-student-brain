@@ -6,6 +6,8 @@ class SecureStorageService {
   static const _refreshTokenKey = 'sb_refresh_token';
   static const _baseUrlKey = 'sb_api_base_url';
   static const _themeModeKey = 'sb_theme_mode';
+  static const _cachedUserKey = 'sb_cached_user_json';
+  static const _cachedDashboardKey = 'sb_cached_dashboard_json';
 
   final FlutterSecureStorage _secureStorage;
   final SharedPreferences _prefs;
@@ -60,34 +62,39 @@ class SecureStorageService {
   Future<void> clearTokens() async {
     await _prefs.remove(_accessTokenKey);
     await _prefs.remove(_refreshTokenKey);
+    await _prefs.remove(_cachedUserKey);
     try {
       await _secureStorage.delete(key: _accessTokenKey).timeout(const Duration(milliseconds: 500));
       await _secureStorage.delete(key: _refreshTokenKey).timeout(const Duration(milliseconds: 500));
     } catch (_) {}
   }
 
-  // Base URL config: strictly enforces secure cloud URLs and purges stale local IPs
+  // Cached User Profile for instant offline/cold-start loading
+  Future<void> saveCachedUserJson(String jsonStr) async {
+    await _prefs.setString(_cachedUserKey, jsonStr);
+  }
+
+  String? getCachedUserJson() {
+    return _prefs.getString(_cachedUserKey);
+  }
+
+  // Cached Dashboard Summary
+  Future<void> saveCachedDashboardJson(String jsonStr) async {
+    await _prefs.setString(_cachedDashboardKey, jsonStr);
+  }
+
+  String? getCachedDashboardJson() {
+    return _prefs.getString(_cachedDashboardKey);
+  }
+
+  // Base URL config: permanently locked to 24/7 Render Cloud URL
   String? getBaseUrl() {
-    final url = _prefs.getString(_baseUrlKey);
-    if (url == null ||
-        url.trim().isEmpty ||
-        !url.startsWith('https://') ||
-        url.contains('192.168.') ||
-        url.contains('10.0.2.2') ||
-        url.contains('127.0.0.1') ||
-        url.contains('localhost') ||
-        url.contains('10.') ||
-        url.contains('172.')) {
-      if (url != null) {
-        _prefs.remove(_baseUrlKey);
-      }
-      return null;
-    }
-    return url;
+    _prefs.remove(_baseUrlKey);
+    return null; // Forces DioClient to use ApiEndpoints.defaultBaseUrl
   }
 
   Future<void> setBaseUrl(String url) async {
-    await _prefs.setString(_baseUrlKey, url);
+    // No-op: Mobile app is permanently locked to 24/7 live Render cloud backend
   }
 
   // Theme mode
