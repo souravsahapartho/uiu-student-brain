@@ -25,8 +25,14 @@ import {
   extractCommunityErrorMessage,
 } from "../api";
 
-export default function EventCard({ event, onToggleRSVP, onDeleted }) {
-  if (!event) return null;
+// The null check lives in this wrapper so every hook in EventCardContent
+// runs on every render (hooks after an early return break React's hook order).
+export default function EventCard(props) {
+  if (!props.event) return null;
+  return <EventCardContent {...props} />;
+}
+
+function EventCardContent({ event, onToggleRSVP, onDeleted }) {
   const { user } = useAuth();
   const [userStatus, setUserStatus] = useState(
     event.user_rsvp_status || (event.is_attending ? "going" : null),
