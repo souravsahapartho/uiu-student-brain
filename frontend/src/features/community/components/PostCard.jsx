@@ -493,8 +493,14 @@ function formatSafeDate(val) {
       });
 }
 
-export default function PostCard({ post, onDeleted, onUpdated }) {
-  if (!post) return null;
+// The null check lives in this wrapper so every hook in PostCardContent
+// runs on every render (hooks after an early return break React's hook order).
+export default function PostCard(props) {
+  if (!props.post) return null;
+  return <PostCardContent {...props} />;
+}
+
+function PostCardContent({ post, onDeleted, onUpdated }) {
   const { user } = useAuth();
   const [currentPost, setCurrentPost] = useState(post);
 
