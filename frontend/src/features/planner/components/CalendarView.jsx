@@ -24,14 +24,10 @@ const ALL_DAYS = [
 // Vibrant academic color palettes for subject blocks
 const SUBJECT_COLORS = [
   {
-    bg: "rgba(37, 99, 235, 0.12)",
-    border: "#2563eb",
-    text: "#1d4ed8",
     bg: "rgba(242, 101, 34, 0.12)",
     border: "#f26522",
     text: "#c2410c",
     badge: "primary",
-    accent: "#2563eb",
     accent: "#f26522",
   },
   {
@@ -49,14 +45,10 @@ const SUBJECT_COLORS = [
     accent: "#f59e0b",
   },
   {
-    bg: "rgba(139, 92, 246, 0.12)",
-    border: "#8b5cf6",
-    text: "#5b21b6",
     bg: "rgba(234, 88, 12, 0.12)",
     border: "#ea580c",
     text: "#9a3412",
     badge: "accent",
-    accent: "#8b5cf6",
     accent: "#ea580c",
   },
   {
@@ -74,14 +66,10 @@ const SUBJECT_COLORS = [
     accent: "#06b6d4",
   },
   {
-    bg: "rgba(234, 88, 12, 0.12)",
-    border: "#ea580c",
-    text: "#9a3412",
     bg: "rgba(217, 119, 6, 0.12)",
     border: "#d97706",
     text: "#b45309",
     badge: "warning",
-    accent: "#ea580c",
     accent: "#d97706",
   },
 ];
