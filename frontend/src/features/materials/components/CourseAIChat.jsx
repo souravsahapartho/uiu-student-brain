@@ -174,11 +174,11 @@ export default function CourseAIChat({
           </div>
         ) : (
           <div className="chat-messages-stream">
-            {messages.map((m) => {
+            {messages.map((m, index) => {
               const isUser = m.role === "user";
               return (
                 <div
-                  key={m.id || Math.random()}
+                  key={m.id ?? `message-${index}`}
                   className={`chat-message-row ${isUser ? "chat-row-user" : "chat-row-assistant"}`}
                 >
                   {!isUser && (
