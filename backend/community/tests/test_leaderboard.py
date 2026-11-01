@@ -78,7 +78,8 @@ class LeaderboardApiTests(APITestCase):
     def test_leaderboard_status_default(self):
         res = self.client.get(reverse("community-leaderboard-status"))
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertFalse(res.data["is_opted_in"])
+        # Users are opted in by default unless they explicitly opt out
+        self.assertTrue(res.data["is_opted_in"])
         self.assertEqual(res.data["user_id"], self.user1.id)
 
     def test_toggle_opt_in(self):
@@ -118,7 +119,8 @@ class LeaderboardApiTests(APITestCase):
             is_opted_in=True,
             custom_quote="Focus mode ON",
         )
-        # Charlie is not opted in
+        # Charlie has opted out
+        LeaderboardProfile.objects.create(user=self.user3, is_opted_in=False)
 
         # Alice follows Bob
         Follow.objects.create(follower=self.user1, following=self.user2)
@@ -155,12 +157,14 @@ class LeaderboardApiTests(APITestCase):
         self.assertEqual(streak_rankings[0]["current_streak"], 2)
 
     def test_leaderboard_when_current_user_not_opted_in(self):
-        # Bob is opted in, Alice is not
+        # Bob is opted in, Alice and Charlie have opted out
         LeaderboardProfile.objects.create(
             user=self.user2,
             is_opted_in=True,
             custom_quote="Studying hard",
         )
+        LeaderboardProfile.objects.create(user=self.user1, is_opted_in=False)
+        LeaderboardProfile.objects.create(user=self.user3, is_opted_in=False)
 
         res = self.client.get(reverse("community-leaderboard"))
         self.assertEqual(res.status_code, status.HTTP_200_OK)
